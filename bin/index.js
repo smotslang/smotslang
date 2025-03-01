@@ -85,5 +85,5 @@ function smotsinaryToBinary(smotsinary, idx){
 }
 
 let fileStr = fs.readFileSync(filePath,{encoding:'utf8', flag:'r'});
-let fileArr = fileStr.split(" ");
+let fileArr = fileStr.split(/\s+/);
 interpretSmotslang(fileArr);
