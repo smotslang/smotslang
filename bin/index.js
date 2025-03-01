@@ -40,18 +40,30 @@ function interpretSmotslang(prgmArr){
         } else if (val == "fall"){
             memArr[memPointer]--;
         } else if (val == "wind"){
-            if (memArr.length > memPointer+1){
-                memArr[memPointer+1] = memArr[memPointer];
+            pc++;
+            let adr = prgmArr[pc];
+            let adrBi = smotsinaryToBinary(adr,pc);
+            let adrInt = parseInt(adrBi,2);
+            if (memArr.length > adrInt){
+                memArr[adrInt] = memArr[memPointer];
             } else {
                 console.log(`ERROR: Wind attempts to copy over the maximum memory limit (${memArr.length} Adresses)! Index ${pc}`);
                 exit();
             }
         } else if (val == "dash"){
             pc++;
-            let adr = smotsinaryToBinary(prgmArr[pc],pc);
-            let adrInt = parseInt(adr,2);
-            if (adrInt < memArr.length){
-                memPointer = parseInt(adr,2);
+            let adr = prgmArr[pc];
+            let valMode = false
+            if (adr[0] == "$"){
+                adr = adr.slice(1);
+                valMode = true;
+            }
+            let adrBi = smotsinaryToBinary(adr,pc);
+            let adrInt = parseInt(adrBi,2);
+            if (adrInt < memArr.length && !valMode){
+                memPointer = adrInt
+            } else if (memArr[adrInt] < memArr.length && valMode){
+                memPointer = memArr[adrInt];
             } else {
                 console.log(`ERROR: Dash attempts to move to a memory adress that is out of range! Index ${pc}`);
                 exit();
