@@ -1,0 +1,21 @@
+{
+  "name": "smotslang",
+  "version": "1.0.0",
+  "description": "smots gaming",
+  "main": "bin/index.js",
+  "bin": {
+    "smots": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "smots"
+  ],
+  "author": "grub",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "yargs": "^17.7.2"
+  }
+}
