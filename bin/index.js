@@ -78,7 +78,7 @@ function interpretSmotslang(prgmArr){
                 stdout.write(String.fromCharCode(memArr[memPointer]));
             }
         } else if (val == "spinner"){
-            if (getRandomInt(0,2) == 3){
+            if (getRandomInt(0,2) == 2){
                 memArr[memPointer] = 1;
             } else {
                 memArr[memPointer] = 0;
