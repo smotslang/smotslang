@@ -9,7 +9,9 @@ const options = yargs
 .usage(usage)                                                                                                  
 .help(true) 
 .option("s", {alias:"str", describe: "Output as string", type: "boolean", demandOption: false })
+.option("m", {alias:"mem-size", describe: "Sets the number of memory addresses (default: 256)", type: "integer", demandOption: false})
 .argv;
+
 
 if (yargs.argv._.length == 0){
     console.log(`ERROR: Exprected at least 1 argument, got 0!`);
@@ -25,10 +27,11 @@ if (!fs.existsSync(filePath)){
     exit();
 }
 function interpretSmotslang(prgmArr){
-    let memArr = new Array(256);
+    let memSize = yargs.argv.m ?? 256;
+    let memArr = new Array(memSize);
     memArr.fill(0);
     let memPointer = 0;
-    let springLocs = new Array(256);
+    let springLocs = new Array(memSize);
     springLocs.fill(0);
 
     for (let pc = 0; pc < prgmArr.length; pc++){
