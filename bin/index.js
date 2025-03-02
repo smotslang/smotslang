@@ -8,7 +8,7 @@ const usage = "\nUsage: smots <file_path>";
 const options = yargs  
 .usage(usage)                                                                                                  
 .help(true) 
-.option("s", {alias:"str", describe: "Output as string", type: "boolean", demandOption: false }) 
+.option("s", {alias:"str", describe: "Output as string", type: "boolean", demandOption: false })
 .argv;
 
 if (yargs.argv._.length == 0){
@@ -16,6 +16,9 @@ if (yargs.argv._.length == 0){
     exit();
 }
 let filePath = yargs.argv._[0];
+
+
+
 
 if (!fs.existsSync(filePath)){
     console.log(`ERROR: The file "${filePath}" does not exist!`);
@@ -85,6 +88,24 @@ function interpretSmotslang(prgmArr){
             }
         } else if (val == "smots5"){
             exit();
+        } else if (val == "spike"){
+            pc++;
+            let adr = prgmArr[pc];
+            let adrInt = smotsinaryToBinary(adr,pc,memArr);
+            let adr2 = "meow";
+            let adrInt2 = -7;
+
+            if (memArr[memPointer] == 0){
+                while (adrInt2 != adrInt){
+                    while (prgmArr[pc] != "jump"){
+                        pc++;
+                    }
+                    pc++;
+                    adr2 = prgmArr[pc];
+                    adrInt2 = smotsinaryToBinary(adr2,pc,memArr);
+                }  
+                pc -= 2;
+            }
         }
     }
 }
