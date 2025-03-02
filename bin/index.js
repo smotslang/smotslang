@@ -49,7 +49,7 @@ function interpretSmotslang(prgmArr){
         } else if (val == "wind"){
             pc++;
             let adr = prgmArr[pc];
-            let adrInt = smotsinaryToBinary(adr,pc,memArr);
+            let adrInt = parseTokenAsNumber(adr,pc,memArr);
             if (memArr.length > adrInt){
                 memArr[adrInt] = memArr[memPointer];
             } else {
@@ -59,7 +59,7 @@ function interpretSmotslang(prgmArr){
         } else if (val == "dash"){
             pc++;
             let adr = prgmArr[pc];
-            let adrInt = smotsinaryToBinary(adr,pc,memArr);
+            let adrInt = parseTokenAsNumber(adr,pc,memArr);
             if (adrInt < memArr.length){
                 memPointer = adrInt
             } else {
@@ -68,15 +68,15 @@ function interpretSmotslang(prgmArr){
             }
         } else if (val == "jump"){
             pc++;
-            springLocs[smotsinaryToBinary(prgmArr[pc],pc,memArr)] = pc;
+            springLocs[parseTokenAsNumber(prgmArr[pc],pc,memArr)] = pc;
         } else if (val == "spring"){
             pc++;
             if (memArr[memPointer] != 0){
-                pc = springLocs[smotsinaryToBinary(prgmArr[pc],pc,memArr)];
+                pc = springLocs[parseTokenAsNumber(prgmArr[pc],pc,memArr)];
             }
         } else if (val == "crumble"){
             pc++;
-            memArr[memPointer] = smotsinaryToBinary(prgmArr[pc],pc,memArr);
+            memArr[memPointer] = parseTokenAsNumber(prgmArr[pc],pc,memArr);
         } else if (val == "retry"){
             if (yargs.argv.s != true && yargs.argv.str != true){
                 stdout.write(memArr[memPointer].toString());
@@ -94,7 +94,7 @@ function interpretSmotslang(prgmArr){
         } else if (val == "spike"){
             pc++;
             let adr = prgmArr[pc];
-            let adrInt = smotsinaryToBinary(adr,pc,memArr);
+            let adrInt = parseTokenAsNumber(adr,pc,memArr);
             let adr2 = "meow";
             let adrInt2 = -7;
 
@@ -105,15 +105,62 @@ function interpretSmotslang(prgmArr){
                     }
                     pc++;
                     adr2 = prgmArr[pc];
-                    adrInt2 = smotsinaryToBinary(adr2,pc,memArr);
+                    adrInt2 = parseTokenAsNumber(adr2,pc,memArr);
                 }  
                 pc -= 2;
+            }
+        } else if (val[0] == "-" && val[1] == "-"){
+            pc++;
+            while (!prgmArr[pc].includes("--")){
+                pc++;
             }
         }
     }
 }
 
-function smotsinaryToBinary(smotsinary, idx, memArr){
+
+function parseTokenAsNumber(token, idx, memArr) {
+    if (token[0] == "$") {
+        let addr = parseTokenAsNumber(token.slice(1), idx, memArr);
+        if (addr > memArr.length) {
+            console.log(`Attempted to read value from address ${addr}, which is outside of the bounds of the memory array.`);
+            exit();
+        }
+        return memArr[addr];
+    } else if (token == "@madeline") {
+        let val = prompt(">>>");
+        let out = parseInt(val);
+        if (isNaN(out)) {
+            console.log(`ERROR: ${val} is not a valid number!`);
+            exit();
+        }
+        return out;
+    } else if (token == "@tas") {
+        // not implemented yet
+        console.log("ERROR: Not implemented yet!");
+        exit();
+    } else {
+        return parseSmotsinary(token);
+    }
+}
+
+function parseSmotsinary(token) {
+    let out = "";
+    for (let i = 0; i < token.length; i++) {
+        if (token[i] == "7") out = out.concat("0");
+        else if (token[i] == "8") out = out.concat("1");
+        else {console.log(`ERROR: Unexpected character ${token[i]} in Smotsinary literal.`); exit();}
+        
+    }
+    out = parseInt(out,2);
+    if (isNaN(out)) {
+        console.log(`Error parsing Smotsinary value: ${token}`);
+        exit();
+    }
+    return out
+}
+
+/*function parseTokenAsNumber(smotsinary, idx, memArr){
     let inp = smotsinary;
     let out = "";
     let valMode = false;
@@ -148,7 +195,7 @@ function smotsinaryToBinary(smotsinary, idx, memArr){
         }
     }
     return out;
-}
+}*/
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
