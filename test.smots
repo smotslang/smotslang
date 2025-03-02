@@ -1,1 +1,3 @@
-crumble 8887788 run crumble 8878878 run crumble 8878888 run crumble 8887877 run crumble 8887788 run crumble 877777 run crumble 8877888 run crumble 8877778 run crumble 8878878 run crumble 8878778 run crumble 8878887 run crumble 8877888 run
+crumble 8887788 retry crumble 8878878 retry crumble 8878888 retry crumble 8887877 retry crumble 8887788 retry crumble 877777 retry crumble 8877888 retry crumble 8877778 retry crumble 8878878 retry crumble 8878778 retry crumble 8878887 retry crumble 8877888 run
+
+dash 8 crumble $7 run

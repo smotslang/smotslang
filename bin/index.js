@@ -1,7 +1,8 @@
 #! /usr/bin/env node
 const yargs = require("yargs");
 const fs = require("fs");
-const { exit } = require("process");
+const { exit, stdout } = require("process");
+let prompt = require("prompt-sync")();
 
 const usage = "\nUsage: smots <file_path>";
 const options = yargs  
@@ -31,9 +32,9 @@ function interpretSmotslang(prgmArr){
         let val = prgmArr[pc];
         if (val == "run"){
             if (yargs.argv.s != true && yargs.argv.str != true){
-                console.log(memArr[memPointer]);
+                stdout.write(memArr[memPointer].toString() + "\n");
             } else {
-                console.log(String.fromCharCode(memArr[memPointer]));
+                stdout.write(String.fromCharCode(memArr[memPointer]) + "\n");
             }
         } else if (val == "climb"){
             memArr[memPointer]++;
@@ -42,8 +43,7 @@ function interpretSmotslang(prgmArr){
         } else if (val == "wind"){
             pc++;
             let adr = prgmArr[pc];
-            let adrBi = smotsinaryToBinary(adr,pc);
-            let adrInt = parseInt(adrBi,2);
+            let adrInt = smotsinaryToBinary(adr,pc,memArr);
             if (memArr.length > adrInt){
                 memArr[adrInt] = memArr[memPointer];
             } else {
@@ -53,47 +53,82 @@ function interpretSmotslang(prgmArr){
         } else if (val == "dash"){
             pc++;
             let adr = prgmArr[pc];
-            let valMode = false
-            if (adr[0] == "$"){
-                adr = adr.slice(1);
-                valMode = true;
-            }
-            let adrBi = smotsinaryToBinary(adr,pc);
-            let adrInt = parseInt(adrBi,2);
-            if (adrInt < memArr.length && !valMode){
+            let adrInt = smotsinaryToBinary(adr,pc,memArr);
+            if (adrInt < memArr.length){
                 memPointer = adrInt
-            } else if (memArr[adrInt] < memArr.length && valMode){
-                memPointer = memArr[adrInt];
             } else {
                 console.log(`ERROR: Dash attempts to move to a memory adress that is out of range! Index ${pc}`);
                 exit();
             }
         } else if (val == "jump"){
             pc++;
-            springLocs[parseInt(smotsinaryToBinary(prgmArr[pc],pc),2)] = pc;
+            springLocs[smotsinaryToBinary(prgmArr[pc],pc,memArr)] = pc;
         } else if (val == "spring"){
             pc++;
             if (memArr[memPointer] != 0){
-                pc = springLocs[parseInt(smotsinaryToBinary(prgmArr[pc],pc),2)];
+                pc = springLocs[smotsinaryToBinary(prgmArr[pc],pc,memArr)];
             }
         } else if (val == "crumble"){
             pc++;
-            memArr[memPointer] = parseInt(smotsinaryToBinary(prgmArr[pc],pc),2);
+            memArr[memPointer] = smotsinaryToBinary(prgmArr[pc],pc,memArr);
+        } else if (val == "retry"){
+            if (yargs.argv.s != true && yargs.argv.str != true){
+                stdout.write(memArr[memPointer].toString());
+            } else {
+                stdout.write(String.fromCharCode(memArr[memPointer]));
+            }
+        } else if (val == "spinner"){
+            if (getRandomInt(0,2) == 3){
+                memArr[memPointer] = 1;
+            } else {
+                memArr[memPointer] = 0;
+            }
+        } else if (val == "smots5"){
+            exit();
         }
     }
 }
 
-function smotsinaryToBinary(smotsinary, idx){
-    let out = ""
-    for (let i = 0; i < smotsinary.length; i++){
-        if (smotsinary[i] == "7") out = out.concat("0");
-        else if (smotsinary[i] == "8") out = out.concat("1");
+function smotsinaryToBinary(smotsinary, idx, memArr){
+    let inp = smotsinary;
+    let out = "";
+    let valMode = false;
+    if (smotsinary[0] == "$"){
+        inp = smotsinary.slice(1);
+        valMode = true;
     }
-    if (isNaN(parseInt(out,2))){
-        console.log(`ERROR: Attempted to parse ${smotsinary} which is not a valid number! Index ${idx}`);
-        exit()
+    if (smotsinary == "@madeline"){
+        out = prompt(">>>");
+        out = parseInt(out);
+        if (isNaN(out)){
+            console.log(`ERROR: Attempted to parse ${smotsinary} which is not a valid number! Index ${idx}`);
+            exit();
+        }
+    } else {
+        for (let i = 0; i < inp.length; i++){
+            if (inp[i] == "7") out = out.concat("0");
+            else if (inp[i] == "8") out = out.concat("1");
+        }
+        out = parseInt(out,2);
+        if (isNaN(out)){
+            console.log(`ERROR: Attempted to parse ${smotsinary} which is not a valid number! Index ${idx}`);
+            exit();
+        }
+    }
+    if (valMode){
+        if (out < memArr.length){
+            out = memArr[out];
+        } else {
+            console.log(`ERROR: Attempted to parse ${smotsinary} which is out of range of the memory array! Index ${idx}`);
+            exit();
+        }
     }
     return out;
+}
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 let fileStr = fs.readFileSync(filePath,{encoding:'utf8', flag:'r'});
