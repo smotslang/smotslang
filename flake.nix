@@ -16,7 +16,7 @@
         name = "smots";
         src = ./.;
 
-        npmDepsHash = "sha256-yZIFArgh3Gbo+n4oItUmryqJiXc8TPplANlfDpA4qEo=";
+        npmDepsHash = "sha256-DNsSARUDTQnLGpXmnh9zmrzon/yRFIN9yjUZ3pgnXXM=";
 
         dontNpmBuild = true;
         npmPackFlags = ["--ignore-scripts"];
