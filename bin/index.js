@@ -28,18 +28,18 @@ if (!fs.existsSync(filePath)) {
     console.error(colors.bgRed(`ERROR: The file "${filePath}" does not exist!`));
     exit();
 }
-/** @param {String[]} prgmArr 
- * @param {any} argv*/
+/** @param {String[]} prgmArr
+ * @param {any} argv
+ * */
 function interpretSmotslang(prgmArr, argv) {
-    let memSize = argv.m ?? 256;
-    let memArr = new Array(memSize);
+    const memSize = /**@type {Number}*/(argv.m ?? 256);
+    const memArr = /**@type {Number[]}*/(new Array(memSize));
     memArr.fill(0);
     let memPointer = 0;
-    let springLocs = new Array(memSize);
+    const springLocs =  /**@type {Number[]}*/(new Array(memSize));
     springLocs.fill(0);
-
     for (let pc = 0; pc < prgmArr.length; pc++) {
-        let val = prgmArr[pc];
+        const val = prgmArr[pc];
         if (val == "run") {
             if (argv.s != true && argv.str != true) {
                 stdout.write(memArr[memPointer].toString() + "\n");
@@ -52,8 +52,8 @@ function interpretSmotslang(prgmArr, argv) {
             memArr[memPointer]--;
         } else if (val == "wind") {
             pc++;
-            let adr = prgmArr[pc];
-            let adrInt = parseTokenAsNumber(adr, pc, memArr);
+            const adr = prgmArr[pc];
+            const adrInt = parseTokenAsNumber(adr, pc, memArr);
             if (memArr.length > adrInt) {
                 memArr[adrInt] = memArr[memPointer];
             } else {
@@ -63,8 +63,8 @@ function interpretSmotslang(prgmArr, argv) {
             }
         } else if (val == "dash") {
             pc++;
-            let adr = prgmArr[pc];
-            let adrInt = parseTokenAsNumber(adr, pc, memArr);
+            const adr = prgmArr[pc];
+            const adrInt = parseTokenAsNumber(adr, pc, memArr);
             if (adrInt < memArr.length) {
                 memPointer = adrInt
             } else {
@@ -98,8 +98,8 @@ function interpretSmotslang(prgmArr, argv) {
             exit();
         } else if (val == "spike") {
             pc++;
-            let adr = prgmArr[pc];
-            let adrInt = parseTokenAsNumber(adr, pc, memArr);
+            const adr = prgmArr[pc];
+            const adrInt = parseTokenAsNumber(adr, pc, memArr);
             let adr2 = "meow";
             let adrInt2 = -7;
 
@@ -123,9 +123,9 @@ function interpretSmotslang(prgmArr, argv) {
     }
 }
 
-/**@param {String} token 
- * @param {Number} idx 
- * @param {String[]} memArr 
+/**@param {String} token
+ * @param {Number} idx
+ * @param {Number[]} memArr
  * */
 function parseTokenAsNumber(token, idx, memArr) {
     if (token[0] == "$") {
@@ -205,14 +205,15 @@ function parseSmotsinary(token) {
     return out;
 }*/
 
-/**@param {Number} min  
- * @param {Number} max */
+/**@param {Number} min
+ * @param {Number} max
+ * */
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-let fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
-let fileArr = fileStr.split(/\s+/);
+const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
+const fileArr = fileStr.split(/\s+/);
 interpretSmotslang(fileArr, argv);
