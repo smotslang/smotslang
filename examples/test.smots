@@ -1,3 +1,6 @@
+-- by: grub --
+-- use the -s flag for full smotsffect --
+
 crumble 8887788 retry crumble 8878878 retry crumble 8878888 retry crumble 8887877 retry crumble 8887788 retry crumble 877777 retry crumble 8877888 retry crumble 8877778 retry crumble 8878878 retry crumble 8878778 retry crumble 8878887 retry crumble 8877888 run
 
 dash 8 crumble $7 run
