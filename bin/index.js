@@ -2,6 +2,7 @@
 const yargs = require("yargs");
 const fs = require("fs");
 const { exit, stdout } = require("process");
+const colors = require("yoctocolors-cjs");
 let prompt = require("prompt-sync")();
 
 const usage = "\nUsage: smots <file_path>";
@@ -14,16 +15,15 @@ const options = yargs
 
 
 if (yargs.argv._.length == 0){
-    console.log(`ERROR: Exprected at least 1 argument, got 0!`);
+    console.error(colors.bgRed(`ERROR: Exprected at least 1 argument, got 0!`));
     exit();
 }
 let filePath = yargs.argv._[0];
 
 
 
-
 if (!fs.existsSync(filePath)){
-    console.log(`ERROR: The file "${filePath}" does not exist!`);
+    console.error(colors.bgRed(`ERROR: The file "${filePath}" does not exist!`));
     exit();
 }
 function interpretSmotslang(prgmArr){
@@ -53,7 +53,7 @@ function interpretSmotslang(prgmArr){
             if (memArr.length > adrInt){
                 memArr[adrInt] = memArr[memPointer];
             } else {
-                console.log(`ERROR: Wind attempts to copy over the maximum memory limit (${memArr.length} Adresses)! Index ${pc}`);
+                console.error(colors.bgRed(`ERROR: Wind attempts to copy over the maximum memory limit (${memArr.length} Adresses)! Index ${pc}`));
                 exit();
             }
         } else if (val == "dash"){
@@ -63,7 +63,7 @@ function interpretSmotslang(prgmArr){
             if (adrInt < memArr.length){
                 memPointer = adrInt
             } else {
-                console.log(`ERROR: Dash attempts to move to a memory adress that is out of range! Index ${pc}`);
+                console.error(colors.bgRed(`ERROR: Dash attempts to move to a memory adress that is out of range! Index ${pc}`));
                 exit();
             }
         } else if (val == "jump"){
@@ -123,7 +123,7 @@ function parseTokenAsNumber(token, idx, memArr) {
     if (token[0] == "$") {
         let addr = parseTokenAsNumber(token.slice(1), idx, memArr);
         if (addr > memArr.length) {
-            console.log(`Attempted to read value from address ${addr}, which is outside of the bounds of the memory array.`);
+            console.error(colors.bgRed(`Attempted to read value from address ${addr}, which is outside of the bounds of the memory array.`));
             exit();
         }
         return memArr[addr];
@@ -131,13 +131,13 @@ function parseTokenAsNumber(token, idx, memArr) {
         let val = prompt(">>>");
         let out = parseInt(val);
         if (isNaN(out)) {
-            console.log(`ERROR: ${val} is not a valid number!`);
+            console.error(colors.bgRed(`ERROR: ${val} is not a valid number!`));
             exit();
         }
         return out;
     } else if (token == "@tas") {
         // not implemented yet
-        console.log("ERROR: Not implemented yet!");
+        console.error(colors.bgRed("ERROR: Not implemented yet!"));
         exit();
     } else {
         return parseSmotsinary(token);
@@ -149,12 +149,12 @@ function parseSmotsinary(token) {
     for (let i = 0; i < token.length; i++) {
         if (token[i] == "7") out = out.concat("0");
         else if (token[i] == "8") out = out.concat("1");
-        else {console.log(`ERROR: Unexpected character ${token[i]} in Smotsinary literal.`); exit();}
+        else {console.error(colors.bgRed(`ERROR: Unexpected character ${token[i]} in Smotsinary literal.`)); exit();}
         
     }
     out = parseInt(out,2);
     if (isNaN(out)) {
-        console.log(`Error parsing Smotsinary value: ${token}`);
+        console.error(colors.bgRed(`Error parsing Smotsinary value: ${token}`));
         exit();
     }
     return out
