@@ -1,0 +1,11 @@
+-- by nilrem --
+dash 7
+fall
+jump 7
+    dash 7
+    climb
+    wind 8
+    dash 8
+    crumble @tas /home/mia/Projects/smotslang/tas_test.smots
+    retry
+spring 7

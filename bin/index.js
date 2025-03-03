@@ -164,9 +164,19 @@ function parseTokenAsNumber(token, prgmState) {
         }
         return out;
     } else if (token == "@tas") {
-        // not implemented yet
-        console.error(colors.bgRed("ERROR: Not implemented yet!"));
-        exit();
+        prgmState.pc++;
+        let filePath = prgmState.currentToken();
+        if (!fs.existsSync(filePath)) {
+            console.log(`ERROR: File ${filePath} does not exist!`);
+            exit();
+        }
+        const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
+        let idx = prgmState.currentMemValue();
+        if (idx > fileStr.length) {
+            console.log(`ERROR: Tried to read byte number ${idx+1} from a file with only ${fileStr.length} bytes in it!`);
+            exit();
+        }
+        return fileStr.charCodeAt(idx);
     } else {
         return parseSmotsinary(token);
     }
