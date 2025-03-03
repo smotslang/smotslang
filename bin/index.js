@@ -188,43 +188,6 @@ function parseSmotsinary(token) {
     return out
 }
 
-/*function parseTokenAsNumber(smotsinary, idx, memArr){
-    let inp = smotsinary;
-    let out = "";
-    let valMode = false;
-    if (smotsinary[0] == "$"){
-        inp = smotsinary.slice(1);
-        valMode = true;
-    }
-    if (smotsinary == "@madeline"){
-        out = prompt(">>>");
-        out = parseInt(out);
-        if (isNaN(out)){
-            console.error(`ERROR: Attempted to parse ${smotsinary} which is not a valid number! Index ${idx}`);
-            exit();
-        }
-    } else {
-        for (let i = 0; i < inp.length; i++){
-            if (inp[i] == "7") out = out.concat("0");
-            else if (inp[i] == "8") out = out.concat("1");
-        }
-        out = parseInt(out,2);
-        if (isNaN(out)){
-            console.error(`ERROR: Attempted to parse ${smotsinary} which is not a valid number! Index ${idx}`);
-            exit();
-        }
-    }
-    if (valMode){
-        if (out < memArr.length){
-            out = memArr[out];
-        } else {
-            console.error(`ERROR: Attempted to parse ${smotsinary} which is out of range of the memory array! Index ${idx}`);
-            exit();
-        }
-    }
-    return out;
-}*/
-
 /**@param {Number} min
  * @param {Number} max
  * */
