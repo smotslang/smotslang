@@ -22,119 +22,139 @@ if (argv._.length == 0) {
 }
 let filePath = argv._[0];
 
-
+class ProgramState {
+    /**
+     * @param {Number} memSize 
+     * @param {String[]} prgmArr
+     **/
+    constructor(memSize, prgmArr) {
+        this.memSize = memSize;
+        this.memArr = new Array(memSize);
+        this.memArr.fill(0);
+        this.springLocs = new Array(memSize);
+        this.springLocs.fill(0);
+        this.memPointer = 0;
+        this.pc = 0;
+        this.prgmArr = prgmArr;
+    }
+    currentMemValue() {
+        return this.memArr[this.memPointer];
+    }
+    /**
+     * @param {Number} x
+     **/
+    setCurrentMemValue(x) {
+        this.memArr[this.memPointer] = x;
+    }
+    currentToken() {
+        return this.prgmArr[this.pc];
+    }
+}
 
 if (!fs.existsSync(filePath)) {
     console.error(colors.bgRed(`ERROR: The file "${filePath}" does not exist!`));
     exit();
 }
-/** @param {String[]} prgmArr
+/** @param {ProgramState} prgmState
  * @param {any} argv
  * */
-function interpretSmotslang(prgmArr, argv) {
-    const memSize = /**@type {Number}*/(argv.m ?? 256);
-    const memArr = /**@type {Number[]}*/(new Array(memSize));
-    memArr.fill(0);
-    let memPointer = 0;
-    const springLocs =  /**@type {Number[]}*/(new Array(memSize));
-    springLocs.fill(0);
-    for (let pc = 0; pc < prgmArr.length; pc++) {
-        const val = prgmArr[pc];
+function interpretSmotslang(prgmState, argv) {
+    for (;prgmState.pc < prgmState.prgmArr.length; prgmState.pc++) {
+        const val = prgmState.currentToken();
         if (val == "run") {
             if (argv.s != true && argv.str != true) {
-                stdout.write(memArr[memPointer].toString() + "\n");
+                stdout.write(prgmState.currentMemValue().toString() + "\n");
             } else {
-                stdout.write(String.fromCharCode(memArr[memPointer]) + "\n");
+                stdout.write(String.fromCharCode(prgmState.currentMemValue()) + "\n");
             }
         } else if (val == "climb") {
-            memArr[memPointer]++;
+            prgmState.setCurrentMemValue(prgmState.currentMemValue()+1);
         } else if (val == "fall") {
-            memArr[memPointer]--;
+            prgmState.setCurrentMemValue(prgmState.currentMemValue()-1);
         } else if (val == "wind") {
-            pc++;
-            const adr = prgmArr[pc];
-            const adrInt = parseTokenAsNumber(adr, pc, memArr);
-            if (memArr.length > adrInt) {
-                memArr[adrInt] = memArr[memPointer];
+            prgmState.pc++;
+            const adr = prgmState.currentToken();
+            const adrInt = parseTokenAsNumber(adr, prgmState);
+            if (prgmState.memArr.length > adrInt) {
+                prgmState.memArr[adrInt] = prgmState.currentMemValue(); 
             } else {
-                console.error(colors.bgRed(`ERROR: Wind attempts to copy over the maximum memory limit (${memArr.length} Adresses)! Index ${pc}`));
+                console.error(colors.bgRed(`ERROR: Wind attempts to copy over the maximum memory limit (${prgmState.memArr.length} Adresses)! Index ${prgmState.pc}`));
 
                 exit();
             }
         } else if (val == "dash") {
-            pc++;
-            const adr = prgmArr[pc];
-            const adrInt = parseTokenAsNumber(adr, pc, memArr);
-            if (adrInt < memArr.length) {
-                memPointer = adrInt
+            prgmState.pc++;
+            const adr = prgmState.currentToken();
+            const adrInt = parseTokenAsNumber(adr, prgmState);
+            if (adrInt < prgmState.memArr.length) {
+                prgmState.memPointer = adrInt
             } else {
-                console.error(colors.bgRed(`ERROR: Dash attempts to move to a memory adress that is out of range! Index ${pc}`));
+                console.error(colors.bgRed(`ERROR: Dash attempts to move to a memory adress that is out of range! Index ${prgmState.pc}`));
                 exit();
             }
         } else if (val == "jump") {
-            pc++;
-            springLocs[parseTokenAsNumber(prgmArr[pc], pc, memArr)] = pc;
+            prgmState.pc++;
+            prgmState.springLocs[parseTokenAsNumber(prgmState.currentToken(), prgmState)] = prgmState.pc;
         } else if (val == "spring") {
-            pc++;
-            if (memArr[memPointer] != 0) {
-                pc = springLocs[parseTokenAsNumber(prgmArr[pc], pc, memArr)];
+            prgmState.pc++;
+            if (prgmState.currentMemValue() != 0) {
+                prgmState.pc = prgmState.springLocs[parseTokenAsNumber(prgmState.currentToken(), prgmState)];
             }
         } else if (val == "crumble") {
-            pc++;
-            memArr[memPointer] = parseTokenAsNumber(prgmArr[pc], pc, memArr);
+            prgmState.pc++;
+            prgmState.setCurrentMemValue(parseTokenAsNumber(prgmState.currentToken(), prgmState));
         } else if (val == "retry") {
             if (argv.s != true && argv.str != true) {
-                stdout.write(memArr[memPointer].toString());
+                stdout.write(prgmState.currentMemValue().toString());
             } else {
-                stdout.write(String.fromCharCode(memArr[memPointer]));
+                stdout.write(String.fromCharCode(prgmState.currentMemValue()));
             }
         } else if (val == "spinner") {
             if (getRandomInt(0, 2) == 2) {
-                memArr[memPointer] = 1;
+                prgmState.setCurrentMemValue(1);
             } else {
-                memArr[memPointer] = 0;
+                prgmState.setCurrentMemValue(0);
             }
         } else if (val == "smots5") {
             exit();
         } else if (val == "spike") {
-            pc++;
-            const adr = prgmArr[pc];
-            const adrInt = parseTokenAsNumber(adr, pc, memArr);
+            prgmState.pc++;
+            const adr = prgmState.currentToken();
+            const adrInt = parseTokenAsNumber(adr, prgmState);
             let adr2 = "meow";
             let adrInt2 = -7;
 
-            if (memArr[memPointer] == 0) {
+            if (prgmState.currentMemValue() == 0) {
                 while (adrInt2 != adrInt) {
-                    while (prgmArr[pc] != "jump") {
-                        pc++;
+                    while (prgmState.currentToken() != "jump") {
+                        prgmState.pc++;
                     }
-                    pc++;
-                    adr2 = prgmArr[pc];
-                    adrInt2 = parseTokenAsNumber(adr2, pc, memArr);
+                    prgmState.pc++;
+                    adr2 = prgmState.currentToken();
+                    adrInt2 = parseTokenAsNumber(adr2, prgmState);
                 }
-                pc -= 2;
+                prgmState.pc -= 2;
             }
         } else if (val[0] == "-" && val[1] == "-") {
-            pc++;
-            while (!prgmArr[pc].includes("--")) {
-                pc++;
+            prgmState.pc++;
+            while (!prgmState.currentToken().includes("--")) {
+                prgmState.pc++;
             }
         }
     }
 }
 
 /**@param {String} token
- * @param {Number} idx
- * @param {Number[]} memArr
+ * @param {ProgramState} prgmState 
  * */
-function parseTokenAsNumber(token, idx, memArr) {
+function parseTokenAsNumber(token, prgmState) {
     if (token[0] == "$") {
-        const addr = parseTokenAsNumber(token.slice(1), idx, memArr);
-        if (addr > memArr.length) {
+        const addr = parseTokenAsNumber(token.slice(1), prgmState);
+        if (addr > prgmState.memArr.length) {
             console.error(colors.bgRed(`Attempted to read value from address ${addr}, which is outside of the bounds of the memory array.`));
             exit();
         }
-        return memArr[addr];
+        return prgmState.memArr[addr];
     } else if (token == "@madeline") {
         const val = prompt(">>>");
         const out = parseInt(val);
@@ -216,4 +236,5 @@ function getRandomInt(min, max) {
 
 const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
 const fileArr = fileStr.split(/\s+/);
-interpretSmotslang(fileArr, argv);
+let state = new ProgramState(argv.m ?? 256, fileArr);
+interpretSmotslang(state, argv);
