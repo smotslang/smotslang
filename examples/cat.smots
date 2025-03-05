@@ -1,11 +1,16 @@
 -- by nilrem --
+-- oh and grub i guess --
 dash 7
 fall
+dash 87
+crumble @recordcount C:\Users\Admin\Downloads\smotslang\bin\index.js
 jump 7
     dash 7
     climb
     wind 8
     dash 8
-    crumble @tas /home/mia/Projects/smotslang/tas_test.smots
+    crumble @tas C:\Users\Admin\Downloads\smotslang\bin\index.js
     retry
+    dash 87
+    fall
 spring 7

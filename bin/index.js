@@ -167,16 +167,25 @@ function parseTokenAsNumber(token, prgmState) {
         prgmState.pc++;
         let filePath = prgmState.currentToken();
         if (!fs.existsSync(filePath)) {
-            console.log(`ERROR: File ${filePath} does not exist!`);
+            console.error(colors.bgRed(`ERROR: File ${filePath} does not exist!`));
             exit();
         }
         const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
         let idx = prgmState.currentMemValue();
         if (idx > fileStr.length) {
-            console.log(`ERROR: Tried to read byte number ${idx+1} from a file with only ${fileStr.length} bytes in it!`);
+            console.error(colors.bgRed(`ERROR: Tried to read byte number ${idx+1} from a file with only ${fileStr.length} bytes in it!`));
             exit();
         }
         return fileStr.charCodeAt(idx);
+    } else if (token == "@recordcount") {
+        prgmState.pc++;
+        let filePath = prgmState.currentToken();
+        if (!fs.existsSync(filePath)) {
+            console.error(colors.bgRed(`ERROR: File ${filePath} does not exist!`));
+            exit();
+        }
+        const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
+        return fileStr.length;
     } else {
         return parseSmotsinary(token);
     }
