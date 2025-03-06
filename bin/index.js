@@ -36,6 +36,7 @@ class ProgramState {
         this.memPointer = 0;
         this.pc = 0;
         this.prgmArr = prgmArr;
+        this.workingFile = __filename;
     }
     currentMemValue() {
         return this.memArr[this.memPointer];
@@ -140,6 +141,14 @@ function interpretSmotslang(prgmState, argv) {
             while (!prgmState.currentToken().includes("--")) {
                 prgmState.pc++;
             }
+        } else if (val == "state"){
+            prgmState.pc++;
+            let filePath = prgmState.currentToken();
+            if (!fs.existsSync(filePath)) {
+                console.error(colors.bgRed(`ERROR: File ${filePath} does not exist!`));
+                exit();
+            }
+            prgmState.workingFile = filePath;
         }
     }
 }
@@ -164,8 +173,8 @@ function parseTokenAsNumber(token, prgmState) {
         }
         return out;
     } else if (token == "@tas") {
-        prgmState.pc++;
-        let filePath = prgmState.currentToken();
+        //prgmState.pc++;
+        let filePath = prgmState.workingFile;
         if (!fs.existsSync(filePath)) {
             console.error(colors.bgRed(`ERROR: File ${filePath} does not exist!`));
             exit();
@@ -178,8 +187,8 @@ function parseTokenAsNumber(token, prgmState) {
         }
         return fileStr.charCodeAt(idx);
     } else if (token == "@recordcount") {
-        prgmState.pc++;
-        let filePath = prgmState.currentToken();
+        //prgmState.pc++;
+        let filePath = prgmState.workingFile;
         if (!fs.existsSync(filePath)) {
             console.error(colors.bgRed(`ERROR: File ${filePath} does not exist!`));
             exit();

@@ -3,13 +3,14 @@
 dash 7
 fall
 dash 87
-crumble @recordcount C:\Users\Admin\Downloads\smotslang\bin\index.js
+state C:\Users\Admin\Downloads\smotslang\examples\meow.txt
+crumble @recordcount
 jump 7
     dash 7
     climb
     wind 8
     dash 8
-    crumble @tas C:\Users\Admin\Downloads\smotslang\bin\index.js
+    crumble @tas
     retry
     dash 87
     fall
