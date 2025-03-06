@@ -5,6 +5,8 @@ const fs = require("fs");
 const { exit, stdout } = require("process");
 const colors = require("yoctocolors-cjs");
 let prompt = require("prompt-sync")();
+const dialog = require("node-file-dialog");
+const config={type:"open-file"}
 
 const usage = "\nUsage: smots <file_path>";
 const options = yargs
@@ -149,6 +151,18 @@ function interpretSmotslang(prgmState, argv) {
                 exit();
             }
             prgmState.workingFile = filePath;
+        } else if (val == "badeline"){
+            dialog(config).then((file) => {
+                if (!fs.existsSync(file[0])) {
+                    console.error(colors.bgRed(`ERROR: File ${file} does not exist!`));
+                    exit();
+                }
+                prgmState.workingFile = file[0];
+
+                prgmState.pc++;
+                interpretSmotslang(prgmState,argv);
+            });
+            return;
         }
     }
 }
