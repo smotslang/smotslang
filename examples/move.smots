@@ -1,0 +1,79 @@
+-- by grub :3 --
+dash 7 crumble 8 -- x value --
+dash 8 crumble 8 -- y value --
+
+-- screen size --
+dash 87 crumble 8777
+dash 88 crumble 8777
+
+jump 878
+
+    -- draw --
+    screenwipe
+    dash 88 wind 887
+    jump 87
+        dash 87 wind 878
+        -- draw x --
+        jump 8
+            dash 888
+            crumble 878887
+
+            dash 7
+            trigspike $878 88
+                dash 8
+                trigspike $887 877
+                    dash 888
+                    crumble 8777777
+                jump 877
+            jump 88
+
+            dash 888
+            retry
+            dash 878
+            fall
+        spring 8
+        -- draw newline --
+        dash 888
+        crumble 8787
+        retry
+        -- decrement y --
+        dash 887
+        fall
+    spring 87
+
+    -- update --
+    dash 8787
+    crumble @madeline
+
+    dash 877
+    crumble 8
+    trigspike $8787 7
+        dash 7
+        climb
+        dash 877
+    jump 7
+
+    crumble 88
+    trigspike $8787 887
+        dash 7
+        fall
+        dash 877
+    jump 887
+
+    crumble 7
+    trigspike $8787 888
+        dash 8
+        climb
+        dash 877
+    jump 888
+
+    crumble 87
+    trigspike $8787 8777
+        dash 8
+        fall
+        dash 877
+    jump 8777
+
+
+    dash 87
+spring 878

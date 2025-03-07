@@ -138,6 +138,26 @@ function interpretSmotslang(prgmState, argv) {
                 }
                 prgmState.pc -= 2;
             }
+        } else if (val == "triggerspike" || val == "trigspike"){
+            prgmState.pc++;
+            let givenVal = parseTokenAsNumber(prgmState.currentToken(),prgmState);
+            prgmState.pc++;
+            const adr = prgmState.currentToken();
+            const adrInt = parseTokenAsNumber(adr, prgmState);
+            let adr2 = "meow";
+            let adrInt2 = -7;
+
+            if (prgmState.currentMemValue() != givenVal) {
+                while (adrInt2 != adrInt) {
+                    while (prgmState.currentToken() != "jump") {
+                        prgmState.pc++;
+                    }
+                    prgmState.pc++;
+                    adr2 = prgmState.currentToken();
+                    adrInt2 = parseTokenAsNumber(adr2, prgmState);
+                }
+                prgmState.pc -= 2;
+            }
         } else if (val[0] == "-" && val[1] == "-") {
             prgmState.pc++;
             while (!prgmState.currentToken().includes("--")) {
@@ -163,6 +183,8 @@ function interpretSmotslang(prgmState, argv) {
                 interpretSmotslang(prgmState,argv);
             });
             return;
+        } else if (val == "screenwipe"){
+            console.clear();
         }
     }
 }
