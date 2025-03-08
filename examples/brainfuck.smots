@@ -1,0 +1,219 @@
+-- brainfuck interpreter --
+--    made by cosmnik_   --
+
+-- addresses:
+    7            : always 0
+    8            : always 1
+    87           : output type (set by user, 0: use retry 1: use run)
+    88-888       : free (im allocating this in case i need space to stuff)
+    8777         : program counter (pointer)
+    8778         : current memory address (pointer)
+
+    8787 until eop   : program
+    eop+1 until inf : tape
+--
+
+-- instructions:
+    0       : end of program
+    1       : +  or  878788
+    2       : -  or  878878
+    3       : >  or  888887
+    4       : <  or  888877
+    5       : .  or  878887
+    6       : ,  or  878877
+    7       : [  or  8788788
+    8       : ]  or  8788878
+--
+
+dash 8 climb
+dash 87 crumble 8878888 retry crumble 8887878 retry crumble 8887877 retry crumble 8887777 retry crumble 8887878 retry crumble 8887877 retry crumble 877777 retry crumble 8887787 retry crumble 8877878 retry crumble 8887877 retry crumble 8887787 retry crumble 8888778 retry crumble 877777 retry crumble 8878888 retry crumble 8887787 retry crumble 877777 retry crumble 8887787 retry crumble 8887878 retry crumble 8878887 retry crumble 888888 retry crumble 877777 retry crumble 878777 retry crumble 887777 retry crumble 877777 retry crumble 8878888 retry crumble 8887787 retry crumble 877777 retry crumble 887778 retry crumble 878778 retry
+crumble @madeline
+
+
+
+-- reads file and converts it into the instruction format above, ignoring characters that are not +-><.,[] --
+-- puts the outputted instructions into memory address 8787 --
+
+badeline
+dash 88 crumble @recordcount
+dash 877 crumble 8787
+
+jump 7
+    dash 878
+    wind $877 climb
+    dash $877
+    crumble @tas
+
+    trigspike 878788 8 -- turn '+' into 1 --
+        crumble 8
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 878878 8 -- turn '-' into 2 --
+        crumble 87
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 888887 8 -- turn '>' into 3 --
+        crumble 88
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 888877 8 -- turn '<' into 4 --
+        crumble 877
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 878887 8 -- turn '.' into 5 --
+        crumble 878
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 878877 8 -- turn ',' into 6 --
+        crumble 887
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 8788788 8 -- turn '[' into 7 --
+        crumble 888
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+
+    trigspike 8788878 8 -- turn ']' into 8 --
+        crumble 8777
+        dash 877 climb
+        dash 7 spike 87
+    jump 8
+    -- ==== --
+    jump 87
+    dash 88 fall
+spring 7
+
+
+dash $877 crumble 7
+dash 877 climb climb wind 8778                     -- set memory address --
+dash 8777 crumble 8787                             -- set program counter --
+dash 877 crumble 7 dash 878 crumble 7           -- clean up 88 - 888 --
+-- used jump addresses: 7, 8, 87 --
+
+
+
+-- executes the brainfuck--
+jump 87777
+    dash $8777
+
+    triggerspike 7 87778
+        spike 87787
+    jump 87778
+
+    triggerspike 8 87778 -- "+" instruction --
+        dash $8778 climb
+        dash 8777 climb
+    jump 87778
+
+    triggerspike 87 87778 -- "-" instruction --
+        dash $8778 fall
+        dash 8777 climb
+    jump 87778
+
+    triggerspike 88 87778 -- ">" instruction --
+        dash 8778 climb
+        dash 8777 climb
+    jump 87778
+
+    triggerspike 877 87778 -- "<" instruction --
+        dash 8778 fall
+        dash 8777 climb
+    jump 87778
+
+    triggerspike 878 87778 -- "." instruction --
+        dash 87
+        triggerspike 7 87788
+            dash $8778
+            retry
+            dash 8777 climb
+        jump 87788
+
+        triggerspike 8 87788
+            dash $8778
+            run
+            dash 8777 climb
+        jump 87788
+    jump 87778
+
+    triggerspike 887 87778 -- "," instruction --
+
+        dash $8778
+        crumble @madeline
+
+        dash 8777 climb
+    jump 87778
+
+    triggerspike 888 87778 -- "[" instruction --
+        dash $8778
+        triggerspike 7 87788
+            -- if current cell is 0 --
+
+            jump 87877
+                -- $88 is current depth --
+                dash $8777
+
+                triggerspike 888 87878
+                    dash 88 climb
+                    dash $8777
+                jump 87878
+
+                triggerspike 8777 87878
+                    dash 88 fall
+                    dash $8777
+                jump 87878
+
+                dash 88 spike 87788
+
+                dash 8777 climb
+
+            spring 87877
+
+        jump 87788
+        dash 8777 climb
+    jump 87778
+
+    triggerspike 8777 87778 -- "]" instruction --
+        dash $8778
+        triggerspike 7 88777
+            dash 8777 climb
+            dash 7 spike 88778
+        jump 88777
+            -- if current cell is not zero --
+            jump 88787
+                -- $88 is current depth --
+                dash $8777
+
+                triggerspike 888 88788
+                    dash 88 fall
+                    dash $8777
+                jump 88788
+
+                triggerspike 8777 88788
+                    dash 88 climb
+                    dash $8777
+                jump 88788
+
+                dash 88 spike 88778
+
+                dash 8777 fall
+            spring 88787
+        jump 88778
+
+
+    jump 87778
+    dash 8
+    spring 87777
+jump 87787
