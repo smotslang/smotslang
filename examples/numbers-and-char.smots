@@ -1,6 +1,8 @@
 -- by grub --
+debug
 crumble ^1234
 run
+reload
 crumble 's retry
 crumble 'm retry
 crumble 'o retry

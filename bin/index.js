@@ -30,8 +30,9 @@ class ProgramState {
     /**
      * @param {Number} memSize 
      * @param {String[]} prgmArr
+     * @param {Boolean} sout
      **/
-    constructor(memSize, prgmArr) {
+    constructor(memSize, prgmArr, sout) {
         this.memSize = memSize;
         this.memArr = new Array(memSize);
         this.memArr.fill(0);
@@ -41,6 +42,7 @@ class ProgramState {
         this.pc = 0;
         this.prgmArr = prgmArr;
         this.workingFile = __filename;
+        this.stringout = sout;
     }
     currentMemValue() {
         return this.memArr[this.memPointer];
@@ -60,14 +62,14 @@ if (!fs.existsSync(filePath)) {
     console.error(colors.bgRed(`ERROR: The file "${filePath}" does not exist!`));
     exit();
 }
-/** @param {ProgramState} prgmState
- * @param {any} argv
+/**
+ * @param {ProgramState} prgmState
  * */
-function interpretSmotslang(prgmState, argv) {
+function interpretSmotslang(prgmState) {
     for (;prgmState.pc < prgmState.prgmArr.length; prgmState.pc++) {
         const val = prgmState.currentToken();
         if (val == "run") {
-            if (argv.s != true && argv.str != true) {
+            if (!prgmState.stringout) {
                 stdout.write(prgmState.currentMemValue().toString() + "\n");
             } else {
                 stdout.write(String.fromCharCode(prgmState.currentMemValue()) + "\n");
@@ -109,7 +111,7 @@ function interpretSmotslang(prgmState, argv) {
             prgmState.pc++;
             prgmState.setCurrentMemValue(parseTokenAsNumber(prgmState.currentToken(), prgmState));
         } else if (val == "retry") {
-            if (argv.s != true && argv.str != true) {
+            if (!prgmState.stringout) {
                 stdout.write(prgmState.currentMemValue().toString());
             } else {
                 stdout.write(String.fromCharCode(prgmState.currentMemValue()));
@@ -182,7 +184,7 @@ function interpretSmotslang(prgmState, argv) {
                 prgmState.workingFile = file[0];
 
                 prgmState.pc++;
-                interpretSmotslang(prgmState,argv);
+                interpretSmotslang(prgmState);
             });
             return;
         } else if (val == "screenwipe"){
@@ -196,14 +198,19 @@ function interpretSmotslang(prgmState, argv) {
             }
             const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
             const fileArr = fileStr.split(/\s+/);
-            let state = new ProgramState(argv.m ?? 256, fileArr);
+            let state = new ProgramState(argv.m ?? 256, fileArr, prgmState.stringout);
             state.memArr = prgmState.memArr;
             state.memPointer = prgmState.memPointer;
             state.workingFile = prgmState.workingFile;
-            interpretSmotslang(state, argv);
+            interpretSmotslang(state);
             prgmState.memArr = state.memArr;
             prgmState.memPointer = state.memPointer;
             prgmState.workingFile = state.workingFile;
+            prgmState.stringout = state.stringout;
+        } else if (val == "reload") {
+            prgmState.stringout = true;
+        } else if (val == "debug") {
+            prgmState.stringout = false;
         } else {
             if (val != ""){
                 console.error(colors.bgRed(`ERROR: Unrecognized token "${val}" at index ${prgmState.pc}!`));
@@ -296,6 +303,6 @@ function getRandomInt(min, max) {
 
 const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
 const fileArr = fileStr.split(/\s+/);
-let state = new ProgramState(argv.m ?? 256, fileArr);
+let state = new ProgramState(argv.m ?? 256, fileArr, argv.s || argv.str);
 process.chdir(path.dirname(path.join(process.cwd(), filePath)));
-interpretSmotslang(state, argv);
+interpretSmotslang(state);
