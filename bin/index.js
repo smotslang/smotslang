@@ -2,6 +2,8 @@
 //@ts-check
 const yargs = require("yargs");
 const fs = require("fs");
+const process = require('process');
+const path = require("path");
 const { exit, stdout } = require("process");
 const colors = require("yoctocolors-cjs");
 let prompt = require("prompt-sync")();
@@ -185,6 +187,26 @@ function interpretSmotslang(prgmState, argv) {
             return;
         } else if (val == "screenwipe"){
             console.clear();
+        } else if (val == "campaign") {
+            prgmState.pc++;
+            let filePath = prgmState.currentToken();
+            if (!fs.existsSync(filePath)) {
+                console.error(colors.bgRed(`ERROR: File ${filePath} does not exist!`));
+                exit();
+            }
+            const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
+            const fileArr = fileStr.split(/\s+/);
+            let state = new ProgramState(argv.m ?? 256, fileArr);
+            state.memArr = prgmState.memArr;
+            state.memPointer = prgmState.memPointer;
+            state.workingFile = prgmState.workingFile;
+            interpretSmotslang(state, argv);
+            prgmState.memArr = state.memArr;
+            prgmState.memPointer = state.memPointer;
+            prgmState.workingFile = state.workingFile;
+        } else {
+            console.error(colors.bgRed(`ERROR: Unrecognized token "${val}" at index ${prgmState.pc}!`));
+            exit();
         }
     }
 }
@@ -231,6 +253,15 @@ function parseTokenAsNumber(token, prgmState) {
         }
         const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
         return fileStr.length;
+    } else if (token[0] == "^") {
+        const out = parseInt(token.slice(1));
+        if (isNaN(out)) {
+            console.error(colors.bgRed(`Error parsing Smotsinary value: ${token}`));
+            exit();
+        }
+        return out;
+    } else if (token[0] == "'"){
+        return token.codePointAt(1);
     } else {
         return parseSmotsinary(token);
     }
@@ -264,4 +295,5 @@ function getRandomInt(min, max) {
 const fileStr = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
 const fileArr = fileStr.split(/\s+/);
 let state = new ProgramState(argv.m ?? 256, fileArr);
+process.chdir(path.dirname(path.join(process.cwd(), filePath)));
 interpretSmotslang(state, argv);

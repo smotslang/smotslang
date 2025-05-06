@@ -3,8 +3,8 @@ dash 7 crumble 8 -- x value --
 dash 8 crumble 8 -- y value --
 
 -- screen size --
-dash 87 crumble 8777
-dash 88 crumble 8777
+dash 87 crumble 87777
+dash 88 crumble 87777
 
 jump 878
 
