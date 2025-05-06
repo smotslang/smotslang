@@ -205,8 +205,10 @@ function interpretSmotslang(prgmState, argv) {
             prgmState.memPointer = state.memPointer;
             prgmState.workingFile = state.workingFile;
         } else {
-            console.error(colors.bgRed(`ERROR: Unrecognized token "${val}" at index ${prgmState.pc}!`));
-            exit();
+            if (val != ""){
+                console.error(colors.bgRed(`ERROR: Unrecognized token "${val}" at index ${prgmState.pc}!`));
+                exit();
+            }
         }
     }
 }
