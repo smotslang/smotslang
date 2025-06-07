@@ -1,46 +1,23 @@
--- by nilrem --
-jump 888
-dash 7
-spinner
-dash 8
-spinner
+-- made by cosmnik_ --
 
-dash 7
-wind 87
-dash 8
-wind 88
+dash ^2 crumble ^1
+jump ^101
+    dash ^0 spinner dash ^1 spinner
+trigspike $^0 ^102
+    dash ^2
+    spring ^101
+jump ^102
+dash ^0
 
-dash 87
-spike 7
-    jump 8
-        dash 877
-        climb
-        dash 87
-        fall
-    spring 8
-jump 7
-dash 88
-spike 87
-    jump 88
-        dash 877
-        fall
-        dash 88
-        fall
-    spring 88
-jump 87
-dash 877
-spike 878
-    dash 7
-    run
-    smots5
-jump 878
+-- printing --
+reload
+trigspike ^0 ^102
+    dash ^3 crumble 'H retry crumble 'e retry crumble 'a retry crumble 'd retry
+    dash ^0
+jump ^102
 
-dash 7      crumble 7
-dash 8      crumble 7
-dash 87     crumble 7
-dash 88     crumble 7
-dash 877    crumble 7
+trigspike ^1 ^102
+    dash ^3 crumble 'T retry crumble 'a retry crumble 'i retry crumble 'l retry
+jump ^102
 
-dash 888
-crumble 8
-spring 888
+crumble 's retry
